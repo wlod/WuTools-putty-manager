@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="WITH" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%d{HH:mm:ss.SSS} | [%thread] | %-5level | %logger{5} | %msg%n%rEx
+			</pattern>
+		</encoder>
+	</appender>
+	
+	
+	<logger name="net.wlodi.tools.putty" level="WARN" additivity="false">
+		<appender-ref ref="WITH" />
+	</logger>
+	<logger name="net.wlodi.tools.putty.WuPuttySessionsManager" level="INFO" additivity="false">
+		<appender-ref ref="WITH" />
+	</logger>
+	
+ 
+	<root level="INFO">
+		<appender-ref ref="WITH" />
+	</root>
+
+</configuration>
