@@ -80,42 +80,33 @@ public class MainWindow extends JFrame {
             
             WhiteJPanel headerPanel = new WhiteJPanel( new GridLayout( 2, 1 ) );
             
-            WhiteJPanel headerRow1Panel = new WhiteJPanel( new BorderLayout() );
-            headerRow1Panel.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10 ) );
-            headerRow1Panel.add(
-                    new JLabel( AppLocale.HELP_DESCRIPTION ),
-                    BorderLayout.CENTER );
-            JButton headerIcon = GUIUtils.makeIconButton( GUIUtils.APPEND_CONFIGURATION_ICON, AppLocale.APPEND_CONFIGURATION_ICON_ALT, AppLocale.APPEND_CONFIGURATION_ICON_ALT );
-            headerIcon.setHorizontalAlignment( JLabel.RIGHT );
-            headerRow1Panel.add( headerIcon, BorderLayout.EAST );
+            WhiteJPanel row1HeaderPanel = new WhiteJPanel( new BorderLayout() );
+            row1HeaderPanel.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10 ) );
+            row1HeaderPanel.add( new JLabel( AppLocale.HELP_DESCRIPTION ), BorderLayout.CENTER );
+            row1HeaderPanel.add( GUIUtils.makeIconButton( GUIUtils.APPEND_CONFIGURATION_ICON, AppLocale.APPEND_CONFIGURATION_ICON_ALT ), BorderLayout.EAST );
 
-            WhiteJPanel fileConfRow2Panel = new WhiteJPanel( new MigLayout( "insets 10 10 10 10" ) );
-            fileConfRow2Panel.add( new JLabel( AppLocale.LABEL_NAME_FILE_PATH ), "align left, cell 0 0 12 1, height pref+4px" ); // cell column row width height
-            fileConfRow2Panel.add( filePathField = new JTextField( 200 ), "cell 0 1 10 1, height pref+4px" );
-            fileConfRow2Panel.add( chooseFileJButton = new ChooseFileJButton(), "align right, cell 10 1 2 1, height pref+4px" ); // cell column row width height
+            WhiteJPanel row2FileConfPanel = new WhiteJPanel( new MigLayout( "insets 10 10 10 10" ) );
+            row2FileConfPanel.add( new JLabel( AppLocale.LABEL_NAME_FILE_PATH ), "align left, cell 0 0 12 1, height pref+4px" ); // cell column row width height
+            row2FileConfPanel.add( filePathField = new JTextField( 200 ), "cell 0 1 10 1, height pref+4px" );
+            row2FileConfPanel.add( chooseFileJButton = new ChooseFileJButton(), "align right, cell 10 1 2 1, height pref+4px" ); // cell column row width height
             
             GUIUtils.appendRequiredField( filePathField );
 
             JPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
-
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
             JPanel appendAndSavePanel = new WhiteJPanel( new BorderLayout() );
             appendAndSavePanel.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
-            appendAndSaveButton = new JButton( AppLocale.COMMAND_CREATE_NEW_REGISTRY_FILE );
+            appendAndSavePanel.add( appendAndSaveButton = new JButton( AppLocale.COMMAND_CREATE_NEW_REGISTRY_FILE ), BorderLayout.EAST );
             appendAndSaveButton.setBackground( Color.WHITE );
             appendAndSaveButton.setHorizontalAlignment( JLabel.LEFT );
             
+            headerPanel.add( row1HeaderPanel );
+            headerPanel.add( row2FileConfPanel );
             
-            // add panels to root + 1th deepth
-            headerPanel.add( headerRow1Panel );
-            headerPanel.add( fileConfRow2Panel );
             add( headerPanel, BorderLayout.NORTH );
-            
             add( centerContentPanel, BorderLayout.CENTER );
-            
-            appendAndSavePanel.add( appendAndSaveButton, BorderLayout.EAST );
             add( appendAndSavePanel, BorderLayout.SOUTH );
 
         }
@@ -125,9 +116,9 @@ public class MainWindow extends JFrame {
     }
     
     private void initListeners( ) {
-        
-        
-        chooseFileJButton.appendListener(new ActionListener() {
+
+        chooseFileJButton.appendListener( new ActionListener() {
+
             public void actionPerformed( ActionEvent ae ) {
                 JFileChooser fileChooser = new JFileChooser();
 
@@ -141,31 +132,30 @@ public class MainWindow extends JFrame {
                     filePathField.setText( selectedFile.getPath() );
                 }
             }
-        });
-        
-               
-     puttySessionsTreePanel.appendListener( new TreeSelectionListener() {
-         public void valueChanged(TreeSelectionEvent e) {
-             DefaultMutableTreeNode node = (DefaultMutableTreeNode) puttySessionsTreePanel.getjTree().getLastSelectedPathComponent();
-             
-             if (node == null  || (node.getUserObject() instanceof String) == false) {
-                 return;
-             }
-             
-             String sessionName = (String) node.getUserObject();
-             LOGGER.debug( "Try show values from session {}.", sessionName );
-             
-             try {
-                puttySessionPanel.updatePuttySession( sessionName );
+        } );
+
+        puttySessionsTreePanel.appendListener( new TreeSelectionListener() {
+
+            public void valueChanged( TreeSelectionEvent event ) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) puttySessionsTreePanel.getjTree().getLastSelectedPathComponent();
+
+                if (node == null || (node.getUserObject() instanceof String) == false) {
+                    return;
+                }
+
+                String sessionName = (String) node.getUserObject();
+                LOGGER.debug( "Try show values from session {}.", sessionName );
+
+                try {
+                    puttySessionPanel.updatePuttySession( sessionName );
+                }
+                catch ( IOException | InterruptedException e ) {
+                    LOGGER.error( e.getMessage(), e );
+                }
+
             }
-            catch ( IOException | InterruptedException e1 ) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-             
-         }
-     } );
-        
+        } );
+
     }
     
     @Override

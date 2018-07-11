@@ -1,23 +1,19 @@
 package net.wlodi.tools.putty.view.panel;
 
 
-import java.awt.Color;
-import java.awt.Point;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.JViewport;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.wlodi.tools.putty.repository.PuttySessionWindowsRegistryRepository;
 import net.wlodi.tools.putty.repository.conf.AppLocale;
+import net.wlodi.tools.putty.view.common.WhiteJScrollPane;
 
 
-public class PuttySessionsTreePanel extends JScrollPane {
+public class PuttySessionsTreePanel extends WhiteJScrollPane {
 
     private static final long serialVersionUID = 457139083953323485L;
 
@@ -41,18 +37,6 @@ public class PuttySessionsTreePanel extends JScrollPane {
     }
 
     private void initGUI( ) {
-        setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10 ) );
-        setBackground( Color.WHITE );
-
-        setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
-        getViewport().setViewPosition( new Point( 0, 0 ) );
-        getViewport().setScrollMode( JViewport.BACKINGSTORE_SCROLL_MODE );
-        setViewportBorder( BorderFactory.createEmptyBorder( 0, 0, 0, 0 ) );
-
-        setFocusable( true );
-        requestFocusInWindow();
-        setOpaque( true );
-
         setViewportView( jTree );
     }
 

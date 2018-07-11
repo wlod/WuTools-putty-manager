@@ -79,7 +79,7 @@ public class GUIUtils {
         window.setIconImage( LOGO_IMAGE );
     }
     
-    public static JButton makeIconButton( ImageIcon imageIcon , String toolTipText , String altText ) {
+    public static JButton makeIconButton( ImageIcon imageIcon , String toolTipText ) {
         // Create and initialize the button.
         JButton button = new JButton();
         button.setToolTipText( toolTipText );
@@ -94,7 +94,7 @@ public class GUIUtils {
             button.setIcon( imageIcon );
         }
         else {
-            button.setText( altText );
+            button.setText( toolTipText );
         }
 
         return button;
