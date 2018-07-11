@@ -66,4 +66,16 @@ public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
         return rows.get( rowIndex );
     }
 
+    public void removeRows( ) {
+        rows.clear();
+    }
+
+    public boolean addRow( PuttySessionEntryDiffDTO row ) {
+        return rows.add( row );
+    }
+
+    public boolean addRows( List<PuttySessionEntryDiffDTO> rows ) {
+        return this.rows.addAll( rows );
+    }
+
 }

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -95,11 +96,6 @@ public class MainWindow extends JFrame {
             
             GUIUtils.appendRequiredField( filePathField );
 
-            WhiteJPanel centerPanel = new WhiteJPanel( new BorderLayout() );
-            
-            WhiteJPanel centerHeadertPanel = new WhiteJPanel( new MigLayout( "insets 10 10 0 10" ) );
-            centerHeadertPanel.add( new JLabel( AppLocale.LABEL_PUTTY_SESSIONS ), "align left, cell 0 0 12 1, height pref+4px");
-            
             JPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
 
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
@@ -117,9 +113,7 @@ public class MainWindow extends JFrame {
             headerPanel.add( fileConfRow2Panel );
             add( headerPanel, BorderLayout.NORTH );
             
-            centerPanel.add( centerHeadertPanel, BorderLayout.NORTH );
-            centerPanel.add( centerContentPanel, BorderLayout.CENTER );
-            add( centerPanel, BorderLayout.CENTER );
+            add( centerContentPanel, BorderLayout.CENTER );
             
             appendAndSavePanel.add( appendAndSaveButton, BorderLayout.EAST );
             add( appendAndSavePanel, BorderLayout.SOUTH );
@@ -153,11 +147,22 @@ public class MainWindow extends JFrame {
      puttySessionsTreePanel.appendListener( new TreeSelectionListener() {
          public void valueChanged(TreeSelectionEvent e) {
              DefaultMutableTreeNode node = (DefaultMutableTreeNode) puttySessionsTreePanel.getjTree().getLastSelectedPathComponent();
-
-             if (node == null) return;
-
-             Object nodeInfo = node.getUserObject();
-             System.out.println( nodeInfo );
+             
+             if (node == null  || (node.getUserObject() instanceof String) == false) {
+                 return;
+             }
+             
+             String sessionName = (String) node.getUserObject();
+             LOGGER.debug( "Try show values from session {}.", sessionName );
+             
+             try {
+                puttySessionPanel.updatePuttySession( sessionName );
+            }
+            catch ( IOException | InterruptedException e1 ) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+             
          }
      } );
         

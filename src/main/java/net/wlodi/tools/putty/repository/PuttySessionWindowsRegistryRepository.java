@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +31,6 @@ public class PuttySessionWindowsRegistryRepository {
     
     private List<String> SESSIONS_NAME_CACHE = null;
     
-    private Map<String, List<PuttySessionEntryDTO>> SESSION_NAME_TYPE_VALUE_CACHE = new HashMap<>();
-    
     private static PuttySessionWindowsRegistryRepository inst;
     
     public static PuttySessionWindowsRegistryRepository inst() {
@@ -53,24 +49,16 @@ public class PuttySessionWindowsRegistryRepository {
     }
     
     public List<PuttySessionEntryDTO> getSessionConfiguration(String sessionName) throws IOException, InterruptedException {
-        List<PuttySessionEntryDTO> sessionConfiguration = SESSION_NAME_TYPE_VALUE_CACHE.get( sessionName );
-        if(sessionConfiguration == null) {
-            
-            String keyPath = AppConf.REGISTRY_KEY + "\\" + sessionName;
-            
-            sessionConfiguration = Collections.synchronizedList(
-                    getRawSessions(keyPath).
-                    stream().
-                    filter( StringUtils::isNotBlank ).
-                    skip( 1 ). // skip first line - is keyPath return by 'req query {keyPath}'.
-                    peek(session -> getSessionLog(keyPath, session)).
-                    map(session -> PuttySessionEntryDTO.createFromRepositoryRawLine(session)).
-                    collect(Collectors.toList()));
-            
-            
-            SESSION_NAME_TYPE_VALUE_CACHE.put(sessionName, sessionConfiguration);
-        }
-        return sessionConfiguration;
+        String keyPath = AppConf.REGISTRY_KEY + "\\" + sessionName;
+        
+        return Collections.synchronizedList(
+                getRawSessions(keyPath).
+                stream().
+                filter( StringUtils::isNotBlank ).
+                skip( 1 ). // skip first line - is keyPath return by 'req query {keyPath}'.
+                peek(session -> getSessionLog(keyPath, session)).
+                map(session -> PuttySessionEntryDTO.createFromRepositoryRawLine(session)).
+                collect(Collectors.toList()));
     }
     
     private List<String> getSessionsName( String keyPath ) throws IOException , InterruptedException {
@@ -107,20 +95,5 @@ public class PuttySessionWindowsRegistryRepository {
     private void getSessionLog( String registryKey, String session ) {
         LOGGER.info("Registry key: {} - session: {}.", registryKey, session);
     }
-//    
-//    public static void main( String[] args ) {
-//        
-//        try {
-//           // new PuttySessionsRepository().getSessionsName().forEach( entry -> System.out.println( entry ) );
-//            
-//            // new PuttySessionsRepository().getRawSessions(AppConf.REGISTRY_KEY + "\\" + "aktualizacja@10.48.192.77-hyper-jboss").forEach( entry -> System.out.println( entry ) ) ;
-//            new PuttySessionRepository().getSessionConfiguration("aktualizacja@10.48.192.77-hyper-jboss").forEach( entry -> System.out.println( entry ) ) ;
-//            
-//        }
-//        catch ( IOException | InterruptedException e ) {
-//            e.printStackTrace();
-//        }
-//        
-//    }
     
 }

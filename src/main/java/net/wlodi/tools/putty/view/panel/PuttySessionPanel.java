@@ -4,13 +4,15 @@ package net.wlodi.tools.putty.view.panel;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 
-import net.wlodi.tools.putty.service.PuttySessionEntryDiffService;
+import net.wlodi.tools.putty.service.PuttySessionService;
+import net.wlodi.tools.putty.service.dto.PuttySessionEntryDiffDTO;
 import net.wlodi.tools.putty.view.common.PuttySessionEntryDiifTableModel;
 
 
@@ -18,7 +20,9 @@ public class PuttySessionPanel extends JScrollPane {
 
     private static final long serialVersionUID = -3608174121587252386L;
     
-    private PuttySessionEntryDiffService puttySessionEntryDiffService = PuttySessionEntryDiffService.inst();
+    private PuttySessionService puttySessionEntryDiffService = PuttySessionService.inst();
+    
+    private PuttySessionEntryDiifTableModel puttySessionEntryDiifTableModel;
     
     private JTable table;
     
@@ -29,8 +33,7 @@ public class PuttySessionPanel extends JScrollPane {
 
     private void initPanels( ) throws IOException, InterruptedException {
         
-        // TODO pobrac nazwe z menu/drzewa z lewej
-        PuttySessionEntryDiifTableModel puttySessionEntryDiifTableModel = new PuttySessionEntryDiifTableModel(puttySessionEntryDiffService.getPuttySessionEntryDiffSList( "aktualizacja@10.48.192.77-hyper-jboss" ));
+        puttySessionEntryDiifTableModel = new PuttySessionEntryDiifTableModel(puttySessionEntryDiffService.getPuttySessionEntryDiffSList( "aktualizacja@10.48.192.77-hyper-jboss" ));
         
         table = new JTable( puttySessionEntryDiifTableModel );
     }
@@ -49,6 +52,13 @@ public class PuttySessionPanel extends JScrollPane {
         setOpaque( true );
         
         setViewportView(table);
+    }
+
+    public void updatePuttySession( String sessionName ) throws IOException, InterruptedException {
+        List<PuttySessionEntryDiffDTO> newRows = puttySessionEntryDiffService.getPuttySessionEntryDiffSList( sessionName );
+        puttySessionEntryDiifTableModel.removeRows();
+        puttySessionEntryDiifTableModel.addRows( newRows );
+        puttySessionEntryDiifTableModel.fireTableDataChanged();
     }
 
 }
