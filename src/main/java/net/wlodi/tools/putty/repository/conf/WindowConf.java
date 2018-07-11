@@ -6,7 +6,7 @@ public enum WindowConf {
             UIConf.MAIN_WINDOW_WIDTH ,
             UIConf.MAIN_WINDOW_HEIGHT ,
             UIConf.MAIN_WINDOW_RESIZABLE ,
-            false ),
+            true ),
     
     DIALOG( AppLocale.MAIN_WINDOW_DIALOG ,
             UIConf.APP_WINDOW_DIALOG_WIDTH ,
