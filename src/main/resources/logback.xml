@@ -4,7 +4,7 @@
 	<appender name="WITH" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>
-				%d{HH:mm:ss.SSS} | [%thread] | %-5level | %logger{5} | %msg%n%rEx
+				%d{HH:mm:ss.SSS} | %-5level | %logger{5} | [%thread] | %msg%n%rEx
 			</pattern>
 		</encoder>
 	</appender>
@@ -16,7 +16,9 @@
 	<logger name="net.wlodi.tools.putty.WuPuttySessionsManager" level="INFO" additivity="false">
 		<appender-ref ref="WITH" />
 	</logger>
-	
+	<logger name="net.wlodi.tools.putty.view.window.MainWindow" level="INFO" additivity="false">
+		<appender-ref ref="WITH" />
+	</logger>
  
 	<root level="INFO">
 		<appender-ref ref="WITH" />

@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.wlodi.tools.putty.repository.JavaUtils;
+
 public class PuttySessionEntryDTO {
 
     String name;
@@ -26,6 +28,43 @@ public class PuttySessionEntryDTO {
         String name = nameTypeValue.get( 0 );
         String type = nameTypeValue.get( 1 );
         String value = nameTypeValue.size() == 3 ? nameTypeValue.get( 2 ) : null;
+        
+        return new PuttySessionEntryDTO(name, type, value);
+    }
+    
+    /**
+     * Example for repositoryRawLine
+     * 
+     * "WideBoldFont"=""
+     * "WideBoldFontIsBold"=dword:00000000
+     * 
+     * @param repositoryRawLine
+     * @return
+     */
+    public static PuttySessionEntryDTO createFromFileRawLine( String repositoryRawLine ) {
+        
+        
+        String[] keyValue = repositoryRawLine.split( "\"=" );
+        
+        if(keyValue.length != 2) {
+            throw new IllegalStateException("Problem with parsing following file raw line: " + repositoryRawLine);
+        }
+        
+        String typeValue = keyValue[1];
+        
+        String name = keyValue[0].replaceFirst( "\"", "" );
+        String type = null;
+        String value = null;
+        
+        if(typeValue.startsWith( RegistryType.REG_DWORD.nameFromExportedFile() )) {
+            value = keyValue[1].replaceFirst( RegistryType.REG_DWORD.nameFromExportedFile() + ":", "");
+            type = RegistryType.REG_DWORD.name();
+        }
+        else {
+            value = JavaUtils.replaceLast( keyValue[1], "\"", "" )
+                             .replaceFirst( "\"", "" );
+            type = RegistryType.REG_SZ.name();
+        }
         
         return new PuttySessionEntryDTO(name, type, value);
     }

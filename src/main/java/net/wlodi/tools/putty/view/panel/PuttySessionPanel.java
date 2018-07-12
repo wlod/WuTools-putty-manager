@@ -18,7 +18,9 @@ public class PuttySessionPanel extends WhiteJScrollPane {
     private static final long serialVersionUID = -3608174121587252386L;
 
     private PuttySessionService puttySessionEntryDiffService = PuttySessionService.inst();
-
+    
+    private String sessionName;
+    
     private PuttySessionEntryDiifTableModel puttySessionEntryDiifTableModel;
 
     private JTable table;
@@ -42,6 +44,12 @@ public class PuttySessionPanel extends WhiteJScrollPane {
         puttySessionEntryDiifTableModel.removeRows();
         puttySessionEntryDiifTableModel.addRows( newRows );
         puttySessionEntryDiifTableModel.fireTableDataChanged();
+        this.sessionName = sessionName;
+    }
+
+    
+    public String getSessionName( ) {
+        return sessionName;
     }
 
 }

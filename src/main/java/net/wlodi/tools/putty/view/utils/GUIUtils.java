@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -14,13 +12,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +33,6 @@ public class GUIUtils {
     public static final ImageIcon CHOOSE_FILE_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.CHOOSE_FILE_ICON_PATH ), AppLocale.CHOOSE_FILE_ICON_ALT );
     public static final ImageIcon APPEND_CONFIGURATION_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.APPEND_CONFIGURATION_ICON_PATH ),
             AppLocale.APPEND_CONFIGURATION_ICON_ALT );
-    
-    private static final Map<JTextField , DocumentListener> REQUIRED_FIELDS_CACHE = new HashMap<>();
     
     public static void exitConfirmDialog( Component componentToClose , ActionImplementation scope ) {
 
@@ -108,51 +100,6 @@ public class GUIUtils {
         catch ( Exception ex ) {
             LOGGER.error( "Can not update style for component: [{}].", component.getClass().getCanonicalName(), ex );
         }
-    }
-    
-    public static void removeRequiredField( JTextField field ) {
-        DocumentListener dl = REQUIRED_FIELDS_CACHE.get( field );
-        if (dl != null) {
-            REQUIRED_FIELDS_CACHE.remove( field );
-        }
-    }
-
-    public static void appendRequiredField( JTextField field ) {
-        appendRequiredField( field, AppLocale.VAL_REQUIRED_FIELD );
-    }
-
-    public static void appendRequiredField( final JTextField field , String message ) {
-        DocumentListener dl = REQUIRED_FIELDS_CACHE.get( field );
-        if (dl != null) {
-            throw new IllegalStateException( "The field currenlty contains a required field document listener." );
-        }
-
-        DocumentListener documentListener = new DocumentListener() {
-
-            public void changedUpdate( DocumentEvent e ) {
-                changed();
-            }
-
-            public void removeUpdate( DocumentEvent e ) {
-                changed();
-            }
-
-            public void insertUpdate( DocumentEvent e ) {
-                changed();
-            }
-
-            public void changed( ) {
-                if (StringUtils.isBlank( field.getText() )) {
-                    field.setBackground( UIConf.VAL_REQUIRED_FIELD_COLOR );
-                }
-                else {
-                    field.setBackground( UIConf.DEFAULT_BG_COLOR );
-                }
-
-            }
-        };
-        field.getDocument().addDocumentListener( documentListener );
-        REQUIRED_FIELDS_CACHE.put( field, documentListener );
     }
     
 }

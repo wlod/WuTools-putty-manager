@@ -46,7 +46,7 @@ public class ActionManager {
     public void run( ActionImplementation scope, int jOptionPaneReturnValue ) {
         Actions actions = implementedActions.get( scope );
         if( actions == null ) {
-            LOGGER.warn( "Can not find actions for scope: {} and jOptionPaneReturnValue: {}", scope, jOptionPaneReturnValue );
+            LOGGER.info( "Can not find actions for scope: {} and jOptionPaneReturnValue: {}", scope, jOptionPaneReturnValue );
         }
         else {
             actions.runAction( jOptionPaneReturnValue );

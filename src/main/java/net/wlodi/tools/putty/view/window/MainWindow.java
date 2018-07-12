@@ -1,75 +1,70 @@
 package net.wlodi.tools.putty.view.window;
 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
 import net.wlodi.tools.putty.repository.conf.AppLocale;
 import net.wlodi.tools.putty.repository.conf.WindowConf;
+import net.wlodi.tools.putty.service.PuttySessionService;
 import net.wlodi.tools.putty.service.gui.joptionpage.ActionManager.ActionImplementation;
-import net.wlodi.tools.putty.view.common.ChooseFileJButton;
+import net.wlodi.tools.putty.view.common.SimpleDocumentListener;
 import net.wlodi.tools.putty.view.common.WhiteJPanel;
+import net.wlodi.tools.putty.view.panel.FilePanel;
+import net.wlodi.tools.putty.view.panel.HeaderPanel;
 import net.wlodi.tools.putty.view.panel.PuttySessionPanel;
 import net.wlodi.tools.putty.view.panel.PuttySessionsTreePanel;
 import net.wlodi.tools.putty.view.utils.GUIUtils;
 
 
 public class MainWindow extends JFrame {
-    
+
     private static final long serialVersionUID = -1563624512998391201L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger( MainWindow.class );
-    
+
+    private PuttySessionService puttySessionService = PuttySessionService.inst();
+
     private PuttySessionsTreePanel puttySessionsTreePanel;
     private PuttySessionPanel puttySessionPanel;
-    
-    private ChooseFileJButton chooseFileJButton;
-    
-    private JTextField filePathField;
-    
+    private FilePanel filePanel;
+
     private JButton appendAndSaveButton;
-    
-    protected File selectedFile;
-    
+
     private static MainWindow inst = null;
 
     public static MainWindow inst( ) {
-        if(inst == null) {
+        if (inst == null) {
             throw new RuntimeException( "MainWindow is null. The constructor was never be invoke." );
         }
         return inst;
     };
 
-    public MainWindow( ) {
+    public MainWindow() {
         super();
         inst = this;
-
-        LOGGER.info( "Start GUI" );
-
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         initGUI();
         initListeners();
+
         setVisible( true );
     }
 
@@ -77,20 +72,11 @@ public class MainWindow extends JFrame {
         try {
             GUIUtils.setFrameData( this, WindowConf.MAIN_WINDOW );
             setLayout( new BorderLayout() );
-            
-            WhiteJPanel headerPanel = new WhiteJPanel( new GridLayout( 2, 1 ) );
-            
-            WhiteJPanel row1HeaderPanel = new WhiteJPanel( new BorderLayout() );
-            row1HeaderPanel.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10 ) );
-            row1HeaderPanel.add( new JLabel( AppLocale.HELP_DESCRIPTION ), BorderLayout.CENTER );
-            row1HeaderPanel.add( GUIUtils.makeIconButton( GUIUtils.APPEND_CONFIGURATION_ICON, AppLocale.APPEND_CONFIGURATION_ICON_ALT ), BorderLayout.EAST );
+            setBackground( Color.WHITE );
 
-            WhiteJPanel row2FileConfPanel = new WhiteJPanel( new MigLayout( "insets 10 10 10 10" ) );
-            row2FileConfPanel.add( new JLabel( AppLocale.LABEL_NAME_FILE_PATH ), "align left, cell 0 0 12 1, height pref+4px" ); // cell column row width height
-            row2FileConfPanel.add( filePathField = new JTextField( 200 ), "cell 0 1 10 1, height pref+4px" );
-            row2FileConfPanel.add( chooseFileJButton = new ChooseFileJButton(), "align right, cell 10 1 2 1, height pref+4px" ); // cell column row width height
-            
-            GUIUtils.appendRequiredField( filePathField );
+            WhiteJPanel headerPanel = new WhiteJPanel( new GridLayout( 2, 1 ) );
+            headerPanel.add( new HeaderPanel( new BorderLayout() ) );
+            headerPanel.add( filePanel = new FilePanel( new MigLayout( "insets 10 10 10 10" ) ) );
 
             JPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
@@ -101,10 +87,7 @@ public class MainWindow extends JFrame {
             appendAndSavePanel.add( appendAndSaveButton = new JButton( AppLocale.COMMAND_CREATE_NEW_REGISTRY_FILE ), BorderLayout.EAST );
             appendAndSaveButton.setBackground( Color.WHITE );
             appendAndSaveButton.setHorizontalAlignment( JLabel.LEFT );
-            
-            headerPanel.add( row1HeaderPanel );
-            headerPanel.add( row2FileConfPanel );
-            
+
             add( headerPanel, BorderLayout.NORTH );
             add( centerContentPanel, BorderLayout.CENTER );
             add( appendAndSavePanel, BorderLayout.SOUTH );
@@ -114,23 +97,22 @@ public class MainWindow extends JFrame {
             LOGGER.error( e.getMessage(), e );
         }
     }
-    
+
     private void initListeners( ) {
 
-        chooseFileJButton.appendListener( new ActionListener() {
+        filePanel.appendListener( new SimpleDocumentListener() {
 
-            public void actionPerformed( ActionEvent ae ) {
-                JFileChooser fileChooser = new JFileChooser();
-
-                String currentPath = (StringUtils.isNotBlank( filePathField.getText() )) ? filePathField.getText()
-                        : MainWindow.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-
-                fileChooser.setCurrentDirectory( new File( currentPath ) );
-                int returnValue = fileChooser.showOpenDialog( GUIUtils.getJFrameIcon() );
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    selectedFile = fileChooser.getSelectedFile();
-                    filePathField.setText( selectedFile.getPath() );
+            @Override
+            public void update( DocumentEvent e ) {
+                File selectedFile = filePanel.getSelectedFile();
+                if(selectedFile == null) {
+                    LOGGER.info( "Loaded registry file is empty.");
+                    return;
                 }
+                
+                LOGGER.info( "Load new windows registry file: {}.", selectedFile.getPath() );
+                
+                puttySessionService.loadWindowsExportedRegistryFile(selectedFile);
             }
         } );
 
@@ -142,11 +124,9 @@ public class MainWindow extends JFrame {
                 if (node == null || (node.getUserObject() instanceof String) == false) {
                     return;
                 }
-
-                String sessionName = (String) node.getUserObject();
-                LOGGER.debug( "Try show values from session {}.", sessionName );
-
                 try {
+                    String sessionName = (String) node.getUserObject();
+                    LOGGER.debug( "Try show values from putty session {}.", sessionName );
                     puttySessionPanel.updatePuttySession( sessionName );
                 }
                 catch ( IOException | InterruptedException e ) {
@@ -157,7 +137,7 @@ public class MainWindow extends JFrame {
         } );
 
     }
-    
+
     @Override
     protected void processWindowEvent( WindowEvent e ) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
@@ -167,5 +147,5 @@ public class MainWindow extends JFrame {
             super.processWindowEvent( e );
         }
     }
-    
+
 }
