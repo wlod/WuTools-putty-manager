@@ -82,8 +82,7 @@ public class MainWindow extends JFrame {
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
-            JPanel appendAndSavePanel = new WhiteJPanel( new BorderLayout() );
-            appendAndSavePanel.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
+            JPanel appendAndSavePanel = new WhiteJPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
             appendAndSavePanel.add( appendAndSaveButton = new JButton( AppLocale.COMMAND_CREATE_NEW_REGISTRY_FILE ), BorderLayout.EAST );
             appendAndSaveButton.setBackground( Color.WHITE );
             appendAndSaveButton.setHorizontalAlignment( JLabel.LEFT );

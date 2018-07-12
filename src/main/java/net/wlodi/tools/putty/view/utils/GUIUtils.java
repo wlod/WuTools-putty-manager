@@ -72,7 +72,6 @@ public class GUIUtils {
     }
     
     public static JButton makeIconButton( ImageIcon imageIcon , String toolTipText ) {
-        // Create and initialize the button.
         JButton button = new JButton();
         button.setToolTipText( toolTipText );
         button.setMargin( new Insets( 2, 2, 2, 2 ) );

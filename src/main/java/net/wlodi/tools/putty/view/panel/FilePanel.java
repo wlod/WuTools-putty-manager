@@ -54,9 +54,6 @@ public class FilePanel extends WhiteJPanel {
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     selectedFile = fileChooser.getSelectedFile();
                     filePathField.setText( selectedFile.getPath() );
-                    
-                    // puttySessionService.
-                    
                 }
             }
         } );

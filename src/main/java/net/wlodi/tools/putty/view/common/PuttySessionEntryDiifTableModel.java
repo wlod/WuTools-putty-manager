@@ -41,7 +41,7 @@ public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt( int rowIndex , int columnIndex ) {
         if (rows.size() <= rowIndex) {
-            LOGGER.error( "The method try get value from row: [" + rowIndex + "], but the size of rows is " + rows.size() );
+            LOGGER.error( "The method try get value from row: [{}], but the size of rows is {}.", rowIndex, rows.size() );
             return null;
         }
         return rows.get( rowIndex ).getValueForColumn( columnIndex );
@@ -60,7 +60,7 @@ public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
 
     public PuttySessionEntryDiffDTO getValueAt( int rowIndex ) {
         if (rows.size() <= rowIndex) {
-            LOGGER.error( "The method try get value from row: [" + rowIndex + "], but the size of rows is " + rows.size() );
+            LOGGER.error( "The method try get value from row: [{}], but the size of rows is {}.", rowIndex, rows.size() );
             return null;
         }
         return rows.get( rowIndex );
