@@ -28,7 +28,7 @@ public class AppLocale {
     public static final String CHOOSE_FILE_ICON_ALT = "Open file";
     
     // app
-    public static final String[] PUTTY_SESSION_COLUMN_NAME = {"Name", "Type", "Value", "New Value", "Comment"};
+    public static final String[] PUTTY_SESSION_COLUMN_NAME = {"Name", "Type", "Value", "File Value", "Comment"};
     
     // help
     public static final String HELP_DESCRIPTION = "<html><b><u>PuTTY configuration</u></b><br><br>Apply new PuTTY theme to current sessions. You can generate windows registry file with changes.<br />Source of below sessions is: " + AppConf.REGISTRY_KEY + "<br /></html>";

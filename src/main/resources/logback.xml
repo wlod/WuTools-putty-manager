@@ -19,6 +19,9 @@
 	<logger name="net.wlodi.tools.putty.view.window.MainWindow" level="INFO" additivity="false">
 		<appender-ref ref="WITH" />
 	</logger>
+	<logger name="net.wlodi.tools.putty.repository.dto.PuttySessionEntryDTO" level="INFO" additivity="false">
+		<appender-ref ref="WITH" />
+	</logger>
  
 	<root level="INFO">
 		<appender-ref ref="WITH" />

@@ -1,5 +1,10 @@
 package net.wlodi.tools.putty.service.dto;
 
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+
+import net.wlodi.tools.putty.repository.conf.AppConf;
 import net.wlodi.tools.putty.repository.dto.PuttySessionEntryDTO;
 
 public class PuttySessionEntryDiffDTO {
@@ -16,11 +21,27 @@ public class PuttySessionEntryDiffDTO {
     
     String comment;
     
-    public static PuttySessionEntryDiffDTO mapFrom(PuttySessionEntryDTO puttySessionEntry) {
+    public static PuttySessionEntryDiffDTO mapFrom(PuttySessionEntryDTO puttySessionEntry, Optional<PuttySessionEntryDTO> puttySessionFileEntry) {
         PuttySessionEntryDiffDTO puttySessionEntryDiff = new PuttySessionEntryDiffDTO();
         puttySessionEntryDiff.name = puttySessionEntry.getName();
         puttySessionEntryDiff.type = puttySessionEntry.getType();
         puttySessionEntryDiff.value = puttySessionEntry.getValue();
+        
+        if(puttySessionFileEntry.isPresent() == false) {
+            return puttySessionEntryDiff;
+        }
+        
+        puttySessionEntryDiff.newValue = puttySessionFileEntry.get().getValue();
+
+        if(AppConf.REGISTRY_IGNORE_NAMES.contains( puttySessionEntryDiff.name.toLowerCase() )) {
+            puttySessionEntryDiff.comment = "The registry entry is ignore.";
+        }
+        else
+        if( (StringUtils.isBlank( puttySessionEntryDiff.value ) && StringUtils.isNotBlank( puttySessionEntryDiff.newValue)) ||
+            (StringUtils.isNotBlank( puttySessionEntryDiff.value ) && puttySessionEntryDiff.value.equals( puttySessionEntryDiff.newValue ) == false )) {
+            puttySessionEntryDiff.comment = "Value will be replace.";
+        }
+        
         return puttySessionEntryDiff;
     }
     

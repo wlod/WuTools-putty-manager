@@ -31,12 +31,9 @@ public class PuttySessionWindowsRegistryRepository {
     
     private List<String> SESSIONS_NAME_CACHE = null;
     
-    private static PuttySessionWindowsRegistryRepository inst;
+    private static PuttySessionWindowsRegistryRepository inst = new PuttySessionWindowsRegistryRepository();
     
     public static PuttySessionWindowsRegistryRepository inst() {
-        if(inst == null) {
-            inst = new PuttySessionWindowsRegistryRepository();
-        }
         return inst;
     }
     

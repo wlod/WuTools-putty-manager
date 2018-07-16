@@ -9,10 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -22,12 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
-import net.wlodi.tools.putty.repository.conf.AppLocale;
 import net.wlodi.tools.putty.repository.conf.WindowConf;
 import net.wlodi.tools.putty.service.PuttySessionService;
 import net.wlodi.tools.putty.service.gui.joptionpage.ActionManager.ActionImplementation;
 import net.wlodi.tools.putty.view.common.SimpleDocumentListener;
 import net.wlodi.tools.putty.view.common.WhiteJPanel;
+import net.wlodi.tools.putty.view.panel.BottomPanel;
 import net.wlodi.tools.putty.view.panel.FilePanel;
 import net.wlodi.tools.putty.view.panel.HeaderPanel;
 import net.wlodi.tools.putty.view.panel.PuttySessionPanel;
@@ -46,8 +43,6 @@ public class MainWindow extends JFrame {
     private PuttySessionsTreePanel puttySessionsTreePanel;
     private PuttySessionPanel puttySessionPanel;
     private FilePanel filePanel;
-
-    private JButton appendAndSaveButton;
 
     private static MainWindow inst = null;
 
@@ -78,18 +73,15 @@ public class MainWindow extends JFrame {
             headerPanel.add( new HeaderPanel( new BorderLayout() ) );
             headerPanel.add( filePanel = new FilePanel( new MigLayout( "insets 10 10 10 10" ) ) );
 
-            JPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
+            WhiteJPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
-            JPanel appendAndSavePanel = new WhiteJPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
-            appendAndSavePanel.add( appendAndSaveButton = new JButton( AppLocale.COMMAND_CREATE_NEW_REGISTRY_FILE ), BorderLayout.EAST );
-            appendAndSaveButton.setBackground( Color.WHITE );
-            appendAndSaveButton.setHorizontalAlignment( JLabel.LEFT );
+            BottomPanel bottomPanel = new BottomPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
             add( headerPanel, BorderLayout.NORTH );
             add( centerContentPanel, BorderLayout.CENTER );
-            add( appendAndSavePanel, BorderLayout.SOUTH );
+            add( bottomPanel, BorderLayout.SOUTH );
 
         }
         catch ( Exception e ) {
@@ -102,16 +94,23 @@ public class MainWindow extends JFrame {
         filePanel.appendListener( new SimpleDocumentListener() {
 
             @Override
-            public void update( DocumentEvent e ) {
+            public void update( DocumentEvent event ) {
                 File selectedFile = filePanel.getSelectedFile();
-                if(selectedFile == null) {
-                    LOGGER.info( "Loaded registry file is empty.");
+                if (selectedFile == null) {
+                    LOGGER.info( "Registry file is empty." );
                     return;
                 }
-                
-                LOGGER.info( "Load new windows registry file: {}.", selectedFile.getPath() );
-                
-                puttySessionService.loadWindowsExportedRegistryFile(selectedFile);
+                try {
+                    puttySessionService.loadWindowsExportedRegistryFile( selectedFile );
+                    puttySessionPanel.updateCurrentPuttySession();
+                    LOGGER.info( "Loaded new windows registry file: {}.", selectedFile.getPath() );
+                }
+                catch ( IOException e ) {
+                    LOGGER.info( "Can not loaded new windows registry file: {}.", selectedFile.getPath(), e );
+                }
+                catch ( InterruptedException e ) {
+                    LOGGER.error( e.getMessage(), e );
+                }
             }
         } );
 
