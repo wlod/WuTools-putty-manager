@@ -20,6 +20,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<project.jar.name>WuTools-${artifactId}-${version}</project.jar.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>4.12</junit.version>
 		<logback.version>1.2.3</logback.version>
@@ -51,6 +52,26 @@
 
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/WuTools-Putty-Manager-libs</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -72,7 +93,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>WuTail-lib/</classpathPrefix>
+							<classpathPrefix>WuTools-Putty-Manager-libs/</classpathPrefix>
 							<mainClass>net.wlodi.tools.putty.WuPuttySessionsManager</mainClass>
 						</manifest>
 						<manifestEntries>
@@ -87,6 +108,65 @@
 					<finalName>${project.jar.name}</finalName>
 
 				</configuration>
+			</plugin>
+			
+			<!-- Maven Assembly Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+
+				<executions>
+					<execution>
+
+						<configuration>
+							<finalName>${project.jar.name}-jar-with-dependencies</finalName>
+							<!-- get all project dependencies -->
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<!-- MainClass in mainfest make a executable jar 
+							<useDefaultManifestFile>true</useDefaultManifestFile>
+							-->
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>WuTools-Putty-Manager-libs/</classpathPrefix>
+									<mainClass>net.wlodi.tools.putty.WuPuttySessionsManager</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Build-Time>${maven.build.timestamp}</Build-Time>
+								</manifestEntries>
+							</archive>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+
+						<id>create-depdendencies-project</id>
+						<!-- bind to the packaging phase -->
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/dist-package.xml</descriptor>
+							</descriptors>
+							<finalName>${project.zip.name}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+
+						<id>create-dist-package</id>
+						<!-- bind to the packaging phase -->
+						<phase>package</phase>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
+
+				</executions>
 			</plugin>
 
 		</plugins>
