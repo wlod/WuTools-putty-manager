@@ -10,6 +10,14 @@
 
 	<url>http://wuputtymanager.wlodi.net</url>
 
+	<developers>
+		<developer>
+			<id>wlodi</id>
+			<name>Grzegorz Wlodek</name>
+			<email>wlodek.grzegorz@gmail.com</email>
+		</developer>
+	</developers>
+
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -91,7 +99,7 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
