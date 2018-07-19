@@ -17,7 +17,7 @@ public class PuttySessionPanel extends WhiteJScrollPane {
 
     private static final long serialVersionUID = -3608174121587252386L;
 
-    private PuttySessionService puttySessionEntryDiffService = PuttySessionService.inst();
+    private PuttySessionService puttySessionService = PuttySessionService.inst();
 
     private String sessionName;
 
@@ -40,7 +40,7 @@ public class PuttySessionPanel extends WhiteJScrollPane {
     }
 
     public void updatePuttySession( String sessionName ) throws IOException , InterruptedException {
-        List<PuttySessionEntryDiffDTO> newRows = puttySessionEntryDiffService.getPuttySessionEntryDiffSList( sessionName );
+        List<PuttySessionEntryDiffDTO> newRows = puttySessionService.getPuttySessionEntryDiffList( sessionName );
         puttySessionEntryDiifTableModel.removeRows();
         puttySessionEntryDiifTableModel.addRows( newRows );
         puttySessionEntryDiifTableModel.fireTableDataChanged();

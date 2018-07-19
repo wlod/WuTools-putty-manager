@@ -16,7 +16,7 @@ public class AppLocale {
     public static final String DIALOG_WINDOW_IS_EXIT_QUESTION = "Exit: " + APP_TITLE + "?";
     
     // labels
-    public static final String LABEL_NAME_FILE_PATH = "PuTTY theme file path:";
+    public static final String LABEL_NAME_FILE_PATH = "PuTTY theme file path (UCS-2 LE BOM - exported by regedit windows tool):";
     public static final String LABEL_WINDOW_OPEN_FILE = "Open file";
     public static final String LABEL_PUTTY_SESSIONS_SHORT = "PuTTY Sessions";
     

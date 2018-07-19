@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<appender name="WITH" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>
-				%d{HH:mm:ss.SSS} | %-5level | %logger{5} | [%thread] | %msg%n%rEx
+				%d{HH:mm:ss.SSS} | %-5level | %-30logger{3} | %-20.20thread | %msg%n%rEx
 			</pattern>
 		</encoder>
 	</appender>
 	
-	
 	<logger name="net.wlodi.tools.putty" level="WARN" additivity="false">
-		<appender-ref ref="WITH" />
+		<appender-ref ref="CONSOLE_APPENDER" />
 	</logger>
 	<logger name="net.wlodi.tools.putty.WuPuttySessionsManager" level="INFO" additivity="false">
-		<appender-ref ref="WITH" />
+		<appender-ref ref="CONSOLE_APPENDER" />
 	</logger>
 	<logger name="net.wlodi.tools.putty.view.window.MainWindow" level="INFO" additivity="false">
-		<appender-ref ref="WITH" />
+		<appender-ref ref="CONSOLE_APPENDER" />
+	</logger>
+	<logger name="net.wlodi.tools.putty.service.PuttySessionService" level="INFO" additivity="false">
+		<appender-ref ref="CONSOLE_APPENDER" />
 	</logger>
 	<logger name="net.wlodi.tools.putty.repository.dto.PuttySessionEntryDTO" level="INFO" additivity="false">
-		<appender-ref ref="WITH" />
+		<appender-ref ref="CONSOLE_APPENDER" />
+	</logger>
+	<logger name="net.wlodi.tools.putty.repository.dto.RegistryType" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE_APPENDER" />
 	</logger>
  
 	<root level="INFO">
-		<appender-ref ref="WITH" />
+		<appender-ref ref="CONSOLE_APPENDER" />
 	</root>
 
 </configuration>

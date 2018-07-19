@@ -11,6 +11,10 @@ public class PuttySessionEntryDiffDTO {
     
     public static int COLUMN_COUNT_FOR_VIEW = 5;
     
+    // TODO maybe below values should be move to AppLocale
+    public static String IGNORE_REGISTRY = "The registry entry is ignore.";
+    public static String NEW_VALUE_REGISTRY = "Value will be replace.";
+    
     String name;
 
     String type;
@@ -34,17 +38,17 @@ public class PuttySessionEntryDiffDTO {
         puttySessionEntryDiff.newValue = puttySessionFileEntry.get().getValue();
 
         if(AppConf.REGISTRY_IGNORE_NAMES.contains( puttySessionEntryDiff.name.toLowerCase() )) {
-            puttySessionEntryDiff.comment = "The registry entry is ignore.";
+            puttySessionEntryDiff.comment = IGNORE_REGISTRY;
         }
         else
         if( (StringUtils.isBlank( puttySessionEntryDiff.value ) && StringUtils.isNotBlank( puttySessionEntryDiff.newValue)) ||
             (StringUtils.isNotBlank( puttySessionEntryDiff.value ) && puttySessionEntryDiff.value.equals( puttySessionEntryDiff.newValue ) == false )) {
-            puttySessionEntryDiff.comment = "Value will be replace.";
+            puttySessionEntryDiff.comment = NEW_VALUE_REGISTRY;
         }
         
         return puttySessionEntryDiff;
     }
-    
+
     private PuttySessionEntryDiffDTO() {
         
     }
@@ -79,10 +83,34 @@ public class PuttySessionEntryDiffDTO {
         throw new UnsupportedOperationException( "The operation is not implemented yet!" );
     }
     
+    public String getComment( ) {
+        return comment;
+    }
+    
+    
+    
+    public String getName( ) {
+        return name;
+    }
+
+    public String getType( ) {
+        return type;
+    }
+
+    
+    public String getNewValue( ) {
+        return newValue;
+    }
+
     private static void validateAccess( int columnIndex ) {
         if (columnIndex > COLUMN_COUNT_FOR_VIEW) {
             throw new IllegalArgumentException( "Column index cannot be greater than column count: " + COLUMN_COUNT_FOR_VIEW + ", columnIndex equals " + columnIndex );
         }
+    }
+
+    @Override
+    public String toString( ) {
+        return "PuttySessionEntryDiffDTO [name=" + name + ", type=" + type + ", value=" + value + ", newValue=" + newValue + ", comment=" + comment + "]";
     }
     
 }

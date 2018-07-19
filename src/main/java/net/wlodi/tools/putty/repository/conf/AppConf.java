@@ -15,9 +15,9 @@ public class AppConf {
     public static final String CURRENT_PATH = AppConf.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
     public static final String REGISTRY_EXPORTED_FILE_KEY_TYPE_VALUE_PATTERN = "^\".*\"=.*";
+    public static final String REGISTRY_FIRST_LINE_NAME_PATTERN = "Windows Registry Editor Version";
 
     public static final List<String> REGISTRY_IGNORE_NAMES = Collections.unmodifiableList( of(
                                                                     "hostName".toLowerCase() )
                                                                     .collect( toList() ) );
-
 }

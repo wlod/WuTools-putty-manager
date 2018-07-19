@@ -26,7 +26,7 @@ public class FilePanel extends WhiteJPanel {
     
     private JTextField filePathField;
 
-    protected File selectedFile;
+    private File selectedFile;
     
     public FilePanel(LayoutManager layout ) {
         super( layout );

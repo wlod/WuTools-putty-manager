@@ -43,6 +43,7 @@ public class MainWindow extends JFrame {
     private PuttySessionsTreePanel puttySessionsTreePanel;
     private PuttySessionPanel puttySessionPanel;
     private FilePanel filePanel;
+    private BottomPanel bottomPanel;
 
     private static MainWindow inst = null;
 
@@ -77,7 +78,7 @@ public class MainWindow extends JFrame {
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
-            BottomPanel bottomPanel = new BottomPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
+            bottomPanel = new BottomPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
             add( headerPanel, BorderLayout.NORTH );
             add( centerContentPanel, BorderLayout.CENTER );
@@ -95,6 +96,7 @@ public class MainWindow extends JFrame {
 
             @Override
             public void update( DocumentEvent event ) {
+                bottomPanel.disableActions();
                 File selectedFile = filePanel.getSelectedFile();
                 if (selectedFile == null) {
                     LOGGER.info( "Registry file is empty." );
@@ -103,6 +105,7 @@ public class MainWindow extends JFrame {
                 try {
                     puttySessionService.loadWindowsExportedRegistryFile( selectedFile );
                     puttySessionPanel.updateCurrentPuttySession();
+                    bottomPanel.enableActions();
                     LOGGER.info( "Loaded new windows registry file: {}.", selectedFile.getPath() );
                 }
                 catch ( IOException e ) {
