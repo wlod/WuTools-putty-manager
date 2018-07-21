@@ -22,9 +22,7 @@
 		<java.version>1.8</java.version>
 		<project.jar.name>WuTools-${artifactId}-${version}</project.jar.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<junit.version>4.12</junit.version>
 		<logback.version>1.2.3</logback.version>
-		<slf4j-api.version>1.7.25</slf4j-api.version>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 	</properties>
 
@@ -175,43 +173,18 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
 			<version>3.7.4</version>
 		</dependency>
 
 		<!-- LOGS -->
-		<!-- SLF4J - API -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
-		</dependency>
-
-		<!-- TESTS -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>

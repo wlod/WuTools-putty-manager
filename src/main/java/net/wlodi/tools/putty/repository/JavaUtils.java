@@ -13,7 +13,7 @@ import datacite.oai.provider.util.BOMUtil;
 public class JavaUtils {
     
     private static final Logger LOGGER = LoggerFactory.getLogger( JavaUtils.class );
-
+    
     public static String replaceLast( String string , String from , String to ) {
         int lastIndex = string.lastIndexOf( from );
         if (lastIndex < 0)
