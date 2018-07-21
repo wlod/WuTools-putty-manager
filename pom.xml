@@ -20,14 +20,14 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<project.jar.name>WuTools-${artifactId}-${version}</project.jar.name>
+		<project.jar.name>${artifactId}-${version}</project.jar.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<logback.version>1.2.3</logback.version>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 	</properties>
 
 	<prerequisites>
-		<maven>3.0.0</maven>
+		<maven>3.0</maven>
 	</prerequisites>
 
 	<build>
@@ -53,6 +53,16 @@
 			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<version>3.7.0</version>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
@@ -71,43 +81,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<version>3.7.0</version>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.0.2</version>
-				<configuration>
-
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>WuTools-Putty-Manager-libs/</classpathPrefix>
-							<mainClass>net.wlodi.tools.putty.WuPuttySessionsManager</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Build-Time>${maven.build.timestamp}</Build-Time>
-						</manifestEntries>
-					</archive>
-
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<compiler-version>${java.version}</compiler-version>
-
-					<finalName>${project.jar.name}</finalName>
-
-				</configuration>
-			</plugin>
-			
 			<!-- Maven Assembly Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -118,14 +91,11 @@
 					<execution>
 
 						<configuration>
-							<finalName>${project.jar.name}-jar-with-dependencies</finalName>
+							<finalName>${project.jar.name}</finalName>
 							<!-- get all project dependencies -->
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-							<!-- MainClass in mainfest make a executable jar 
-							<useDefaultManifestFile>true</useDefaultManifestFile>
-							-->
 							<archive>
 								<manifest>
 									<addClasspath>true</addClasspath>
@@ -140,27 +110,9 @@
 						</configuration>
 
 						<id>create-depdendencies-project</id>
-						<!-- bind to the packaging phase -->
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
-						</goals>
-					</execution>
-
-					<execution>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assembly/dist-package.xml</descriptor>
-							</descriptors>
-							<finalName>${project.zip.name}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-
-						<id>create-dist-package</id>
-						<!-- bind to the packaging phase -->
-						<phase>package</phase>
-						<goals>
-							<goal>attached</goal>
 						</goals>
 					</execution>
 
@@ -171,7 +123,7 @@
 	</build>
 
 	<dependencies>
-
+		<!-- SWING/LAYOUT etc. -->
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
