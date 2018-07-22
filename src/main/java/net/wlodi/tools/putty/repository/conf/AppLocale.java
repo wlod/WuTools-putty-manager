@@ -14,6 +14,8 @@ public class AppLocale {
     // dialog
     public static final String DIALOG_WINDOW_IS_EXIT_TITLE = "Confirm Exit";
     public static final String DIALOG_WINDOW_IS_EXIT_QUESTION = "Exit: " + APP_TITLE + "?";
+    public static final String DIALOG_WINDOW_OPEN_WINDOWS_REGISTER_FILE = "Open windows register file";
+    public static final String DIALOG_WINDOW_SAVE_NEW_WINDOWS_REGISTER_FILE = "Save new windows register file";
     
     // labels
     public static final String LABEL_NAME_FILE_PATH = "PuTTY theme file path (UCS-2 LE BOM - exported by regedit windows tool):";
@@ -26,6 +28,7 @@ public class AppLocale {
     // other
     public static final String APPEND_CONFIGURATION_ICON_ALT = "Append PuTTY configuration to below sessions";
     public static final String CHOOSE_FILE_ICON_ALT = "Open file";
+    public static final String LOADER_ICON_ALT = "Processing";
     
     // app
     public static final String[] PUTTY_SESSION_COLUMN_NAME = {"Name", "Type", "Value", "File Value", "Comment"};

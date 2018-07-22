@@ -31,6 +31,7 @@ public class GUIUtils {
     public static final Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage( GUIUtils.class.getResource( UIConf.MAIN_WINDOW_PATH_TO_LOGO_PATH ) );
     public static final Icon LOGO_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.MAIN_WINDOW_PATH_TO_LOGO_PATH ) );
     public static final ImageIcon CHOOSE_FILE_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.CHOOSE_FILE_ICON_PATH ), AppLocale.CHOOSE_FILE_ICON_ALT );
+    public static final ImageIcon LOADER_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.LOADER_ICON_PATH ), AppLocale.CHOOSE_FILE_ICON_ALT );
     public static final ImageIcon APPEND_CONFIGURATION_ICON = new ImageIcon( GUIUtils.class.getResource( UIConf.APPEND_CONFIGURATION_ICON_PATH ),
             AppLocale.APPEND_CONFIGURATION_ICON_ALT );
     

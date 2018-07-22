@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeSelectionEvent;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
+import net.wlodi.tools.putty.repository.conf.AppLocale;
 import net.wlodi.tools.putty.repository.conf.WindowConf;
 import net.wlodi.tools.putty.service.PuttySessionService;
 import net.wlodi.tools.putty.service.gui.joptionpage.ActionManager.ActionImplementation;
@@ -37,14 +39,16 @@ public class MainWindow extends JFrame {
     private static final long serialVersionUID = -1563624512998391201L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger( MainWindow.class );
-
+    
     private PuttySessionService puttySessionService = PuttySessionService.inst();
-
+    
+    private final JButton loaderPanel = GUIUtils.makeIconButton( GUIUtils.LOADER_ICON, AppLocale.LOADER_ICON_ALT );
+    private WhiteJPanel centerContentPanel;
     private PuttySessionsTreePanel puttySessionsTreePanel;
     private PuttySessionPanel puttySessionPanel;
     private FilePanel filePanel;
     private BottomPanel bottomPanel;
-
+    
     private static MainWindow inst = null;
 
     public static MainWindow inst( ) {
@@ -69,17 +73,19 @@ public class MainWindow extends JFrame {
             GUIUtils.setFrameData( this, WindowConf.MAIN_WINDOW );
             setLayout( new BorderLayout() );
             setBackground( Color.WHITE );
-
+            
             WhiteJPanel headerPanel = new WhiteJPanel( new GridLayout( 2, 1 ) );
             headerPanel.add( new HeaderPanel( new BorderLayout() ) );
             headerPanel.add( filePanel = new FilePanel( new MigLayout( "insets 10 10 10 10" ) ) );
 
-            WhiteJPanel centerContentPanel = new WhiteJPanel( new BorderLayout() );
+            centerContentPanel = new WhiteJPanel( new BorderLayout() );
+            loaderPanel.setVisible( false );
+            centerContentPanel.add( loaderPanel, BorderLayout.NORTH );
             centerContentPanel.add( puttySessionsTreePanel = new PuttySessionsTreePanel(), BorderLayout.WEST );
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
             bottomPanel = new BottomPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
-
+            
             add( headerPanel, BorderLayout.NORTH );
             add( centerContentPanel, BorderLayout.CENTER );
             add( bottomPanel, BorderLayout.SOUTH );
@@ -137,6 +143,18 @@ public class MainWindow extends JFrame {
             }
         } );
 
+    }
+    
+    public void startProcessing() {
+        loaderPanel.setVisible( true );
+        puttySessionsTreePanel.setVisible( false );
+        puttySessionPanel.setVisible( false );
+    }
+    
+    public void stopProcessing() {
+        loaderPanel.setVisible( false );
+        puttySessionsTreePanel.setVisible( true );
+        puttySessionPanel.setVisible( true );
     }
 
     @Override

@@ -15,6 +15,7 @@ public class UIConf {
     public static final String MAIN_WINDOW_PATH_TO_LOGO_PATH = "/logo.png";
     public static final String APPEND_CONFIGURATION_ICON_PATH = "/images/wired.png";
     public static final String CHOOSE_FILE_ICON_PATH = "/images/folder.png";
+    public static final String LOADER_ICON_PATH = "/images/loader.gif";
 
     public static final Color DEAFAULT_IMAGE_ICON_COLOR = new Color( 255, 255, 255, 245 );
     public static final Color DEFAULT_NUMBER_COLUMN_BACKGROUND_COLOR = Color.decode( "#EEEEEE" );
