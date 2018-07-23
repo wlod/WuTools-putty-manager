@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.wlodi.tools.putty.repository.JavaUtils;
 import net.wlodi.tools.putty.view.common.BootGuiConfiguration;
 import net.wlodi.tools.putty.view.system.EventQueueProxy;
 import net.wlodi.tools.putty.view.window.MainWindow;
@@ -23,8 +24,12 @@ public class WuPuttySessionsManager {
 
         LOGGER.info( "------------------------------------------" );
         
+        if(JavaUtils.isWindows() == false) {
+            LOGGER.info( "Application is available only for Windows." );
+            return;
+        }
+        
         initGUI();
-
     }
 
     private static void initGUI( ) {
@@ -32,7 +37,6 @@ public class WuPuttySessionsManager {
             BootGuiConfiguration.boot();
             Toolkit.getDefaultToolkit().getSystemEventQueue().push( new EventQueueProxy() );
             SwingUtilities.invokeLater( new Runnable() {
-
                 public void run( ) {
                     new MainWindow( );
                 }

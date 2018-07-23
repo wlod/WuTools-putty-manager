@@ -11,9 +11,11 @@ import datacite.oai.provider.util.BOMUtil;
 
 
 public class JavaUtils {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger( JavaUtils.class );
     
+    private static final String OS_NAME = System.getProperty( "os.name" ).toLowerCase();
+
     public static String replaceLast( String string , String from , String to ) {
         int lastIndex = string.lastIndexOf( from );
         if (lastIndex < 0)
@@ -40,5 +42,9 @@ public class JavaUtils {
         }
         return stringWithBOM;
     }
-
+    
+    public static boolean isWindows() {
+        return OS_NAME.indexOf("win") >= 0;
+    }
+    
 }

@@ -58,6 +58,7 @@ public class BottomPanel extends WhiteJPanel {
                 int returnValue = fileChooser.showOpenDialog( GUIUtils.getJFrameIcon() );
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     selectedFile = fileChooser.getSelectedFile();
+                    
                     createFile();
                 }
             }
