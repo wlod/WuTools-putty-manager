@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
+import net.wlodi.tools.putty.repository.PuttySessionWindowsRegistryRepository;
 import net.wlodi.tools.putty.repository.conf.AppLocale;
 import net.wlodi.tools.putty.repository.conf.WindowConf;
 import net.wlodi.tools.putty.service.PuttySessionService;
@@ -39,16 +40,18 @@ public class MainWindow extends JFrame {
     private static final long serialVersionUID = -1563624512998391201L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger( MainWindow.class );
-    
+
+    private PuttySessionWindowsRegistryRepository puttySessionRepository = PuttySessionWindowsRegistryRepository.inst();
+
     private PuttySessionService puttySessionService = PuttySessionService.inst();
-    
+
     private final JButton loaderPanel = GUIUtils.makeIconButton( GUIUtils.LOADER_ICON, AppLocale.LOADER_ICON_ALT );
     private WhiteJPanel centerContentPanel;
     private PuttySessionsTreePanel puttySessionsTreePanel;
     private PuttySessionPanel puttySessionPanel;
     private FilePanel filePanel;
     private BottomPanel bottomPanel;
-    
+
     private static MainWindow inst = null;
 
     public static MainWindow inst( ) {
@@ -64,6 +67,7 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         initGUI();
         initListeners();
+        loadSessionEntryConfiguration();
 
         setVisible( true );
     }
@@ -73,7 +77,7 @@ public class MainWindow extends JFrame {
             GUIUtils.setFrameData( this, WindowConf.MAIN_WINDOW );
             setLayout( new BorderLayout() );
             setBackground( Color.WHITE );
-            
+
             WhiteJPanel headerPanel = new WhiteJPanel( new GridLayout( 2, 1 ) );
             headerPanel.add( new HeaderPanel( new BorderLayout() ) );
             headerPanel.add( filePanel = new FilePanel( new MigLayout( "insets 10 10 10 10" ) ) );
@@ -85,7 +89,7 @@ public class MainWindow extends JFrame {
             centerContentPanel.add( puttySessionPanel = new PuttySessionPanel(), BorderLayout.CENTER );
 
             bottomPanel = new BottomPanel( new BorderLayout(), BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
-            
+
             add( headerPanel, BorderLayout.NORTH );
             add( centerContentPanel, BorderLayout.CENTER );
             add( bottomPanel, BorderLayout.SOUTH );
@@ -111,6 +115,7 @@ public class MainWindow extends JFrame {
                 try {
                     puttySessionService.loadWindowsExportedRegistryFile( selectedFile );
                     puttySessionPanel.updateCurrentPuttySession();
+                    puttySessionsTreePanel.updateModel();
                     bottomPanel.enableActions();
                     LOGGER.info( "Loaded new windows registry file: {}.", selectedFile.getPath() );
                 }
@@ -144,14 +149,31 @@ public class MainWindow extends JFrame {
         } );
 
     }
-    
-    public void startProcessing() {
+
+    private void loadSessionEntryConfiguration( ) {
+        MainWindow.inst().startProcessing();
+        Runnable createFileTask = ( ) -> {
+            try {
+                for ( String sessionName : puttySessionRepository.getSessionsName() ) {
+                    puttySessionRepository.getSessionConfiguration( sessionName );
+                }
+            }
+            catch ( IOException | InterruptedException e ) {
+                LOGGER.error( "Can not load entry configuration for putty sessions.", e );
+            }
+            MainWindow.inst().stopProcessing();
+        };
+        Thread thread = new Thread( createFileTask, "create-file" );
+        thread.start();
+    }
+
+    public void startProcessing( ) {
         loaderPanel.setVisible( true );
         puttySessionsTreePanel.setVisible( false );
         puttySessionPanel.setVisible( false );
     }
-    
-    public void stopProcessing() {
+
+    public void stopProcessing( ) {
         loaderPanel.setVisible( false );
         puttySessionsTreePanel.setVisible( true );
         puttySessionPanel.setVisible( true );

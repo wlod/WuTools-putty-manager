@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +20,7 @@ import net.wlodi.tools.putty.repository.dto.PuttySessionEntryDTO;
 
 /**
  * 
- * Based on {@link https://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java}
+ * Registry entries based on {@link https://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java}
  * 
  * 
  * @author wlodi
@@ -31,6 +33,8 @@ public class PuttySessionWindowsRegistryRepository {
     
     private List<String> SESSIONS_NAME_CACHE = null;
     
+    private Map<String, List<PuttySessionEntryDTO>> SESSIONS_CACHE = new HashMap<>();
+    
     private static PuttySessionWindowsRegistryRepository inst = new PuttySessionWindowsRegistryRepository();
     
     public static PuttySessionWindowsRegistryRepository inst() {
@@ -41,21 +45,26 @@ public class PuttySessionWindowsRegistryRepository {
         
     }
     
-    public List<String> getSessionsName () throws IOException, InterruptedException {
+    public List<String> getSessionsName() throws IOException, InterruptedException {
         return getSessionsName(AppConf.REGISTRY_KEY);
     }
     
     public List<PuttySessionEntryDTO> getSessionConfiguration(String sessionName) throws IOException, InterruptedException {
         String keyPath = AppConf.REGISTRY_KEY + "\\" + sessionName;
         
-        return Collections.synchronizedList(
-                getRawSessions(keyPath).
-                stream().
-                filter( StringUtils::isNotBlank ).
-                skip( 1 ). // skip first line - is keyPath return by 'req query {keyPath}'.
-                peek(session -> getSessionLog(keyPath, session)).
-                map(session -> PuttySessionEntryDTO.createFromRepositoryRawLine(session)).
-                collect(Collectors.toList()));
+        List<PuttySessionEntryDTO> sessionEntries = SESSIONS_CACHE.get( sessionName );
+        if(sessionEntries == null) {
+            sessionEntries = Collections.synchronizedList(
+                    getRawSessions(keyPath).
+                    stream().
+                    filter( StringUtils::isNotBlank ).
+                    skip( 1 ). // skip first line - is keyPath return by 'req query {keyPath}'.
+                    peek(session -> getSessionLog(keyPath, session)).
+                    map(session -> PuttySessionEntryDTO.createFromRepositoryRawLine(session)).
+                    collect(Collectors.toList()));
+            SESSIONS_CACHE.put( sessionName, sessionEntries );
+        }
+        return sessionEntries;
     }
     
     private List<String> getSessionsName( String keyPath ) throws IOException , InterruptedException {

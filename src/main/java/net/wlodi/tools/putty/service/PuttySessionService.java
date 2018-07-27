@@ -8,7 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,13 +31,17 @@ public class PuttySessionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( PuttySessionService.class );
 
+    private final Map<String , Integer> SESSIONS_NAME_DIFF_COUNT_CACHE = new HashMap<>();
+
+    private final Map<String , List<PuttySessionEntryDiffDTO>> SESSIONS_NAME_ENTRIES_DIFF = new HashMap<>();
+
     private PuttySessionWindowsRegistryRepository puttySessionRepository = PuttySessionWindowsRegistryRepository.inst();
 
     private String puttySessionFileConfigurationHeader;
 
     private List<PuttySessionEntryDTO> puttySessionFileConfiguration;
 
-    private static PuttySessionService inst = new PuttySessionService();;
+    private static PuttySessionService inst = new PuttySessionService();
 
     public static PuttySessionService inst( ) {
         return inst;
@@ -55,13 +61,46 @@ public class PuttySessionService {
      * @throws InterruptedException
      */
     public List<PuttySessionEntryDiffDTO> getPuttySessionEntryDiffList( String sessionName ) throws IOException , InterruptedException {
-
         List<PuttySessionEntryDTO> puttySessionEntries = puttySessionRepository.getSessionConfiguration( sessionName );
+        List<PuttySessionEntryDiffDTO> puttySessionEntriesDiff = SESSIONS_NAME_ENTRIES_DIFF.get( sessionName );
+        if (puttySessionEntriesDiff == null) {
+            puttySessionEntriesDiff = puttySessionEntries
+                    .stream()
+                    .map( puttySessionEntry -> PuttySessionEntryDiffDTO.mapFrom( puttySessionEntry, getEntryFromFile( puttySessionEntry ) ) )
+                    .peek( diff -> countDiffForSession( diff, sessionName ) )
+                    .collect( Collectors.toList() );
+            SESSIONS_NAME_ENTRIES_DIFF.put( sessionName, puttySessionEntriesDiff );
+        }
+        return puttySessionEntriesDiff;
+    }
 
-        return puttySessionEntries
-                .stream()
-                .map( puttySessionEntry -> PuttySessionEntryDiffDTO.mapFrom( puttySessionEntry, getEntryFromFile( puttySessionEntry ) ) )
-                .collect( Collectors.toList() );
+    /**
+     * TODO Maybe it is not the best way - method: getPuttySessionEntryDiffList should invoked earlier.
+     * 
+     * @param sessionName
+     * @return number of changes for session
+     */
+    public Integer getNumberOfChanges( String sessionName ) {
+        return SESSIONS_NAME_DIFF_COUNT_CACHE.get( sessionName );
+    }
+
+    /**
+     * 
+     * @param diff
+     * @param sessionName
+     */
+    private void countDiffForSession( PuttySessionEntryDiffDTO diff , String sessionName ) {
+        if (PuttySessionEntryDiffDTO.NEW_VALUE_REGISTRY.equals( diff.getComment() ) == false) {
+            return;
+        }
+
+        Integer sessionDiffCounter = SESSIONS_NAME_DIFF_COUNT_CACHE.get( sessionName );
+        if (sessionDiffCounter == null) {
+            SESSIONS_NAME_DIFF_COUNT_CACHE.put( sessionName, 1 );
+        }
+        else {
+            SESSIONS_NAME_DIFF_COUNT_CACHE.put( sessionName, ++sessionDiffCounter );
+        }
     }
 
     /**
@@ -79,15 +118,25 @@ public class PuttySessionService {
                     .map( registryLine -> PuttySessionEntryDTO.createFromFileRawLine( registryLine ) )
                     .collect( Collectors.toList() );
 
+            loadDiffWithCurrentLoadedSessions();
+
         }
-        catch ( IOException e ) {
+        catch ( IOException | InterruptedException e ) {
             LOGGER.info( "Can not read values from file: {}.", exportedRegistryFile );
             throw new IOException( e );
         }
 
     }
 
-    public void registerHeader( String rawUTF16LELine ) {
+    private void loadDiffWithCurrentLoadedSessions( ) throws IOException , InterruptedException {
+        SESSIONS_NAME_ENTRIES_DIFF.clear();
+        SESSIONS_NAME_DIFF_COUNT_CACHE.clear();
+        for ( String sessionName : puttySessionRepository.getSessionsName() ) {
+            getPuttySessionEntryDiffList( sessionName );
+        }
+    }
+
+    private void registerHeader( String rawUTF16LELine ) {
         if (StringUtils.isBlank( rawUTF16LELine ) || puttySessionFileConfigurationHeader != null) {
             return;
         }
@@ -99,6 +148,8 @@ public class PuttySessionService {
     }
 
     /**
+     * 
+     * TODO tears ;-(
      * 
      * @param selectedFile
      */
