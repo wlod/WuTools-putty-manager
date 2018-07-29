@@ -68,7 +68,6 @@ public class PuttySessionsTreePanel extends WhiteJScrollPane {
     public void updateModel( ) {
         for ( PuttySessionTreeNode puttySessionTreeNode : puttySessionTreeNodes ) {
             Integer numberOfChanges = puttySessionService.getNumberOfChanges( puttySessionTreeNode.getSessionName() );
-            System.out.println( "numberOfChanges " + numberOfChanges + " puttySessionTreeNode.getSessionName() " + puttySessionTreeNode.getSessionName()  );
             puttySessionTreeNode.setNumberOfChanges( numberOfChanges );
         }
         revalidate();

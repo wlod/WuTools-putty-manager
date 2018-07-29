@@ -1,0 +1,71 @@
+[33mcommit b6ef0e329f8f0c99a6f3fb01c4a6812a49137552[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Fri Jul 27 20:54:34 2018 +0200
+
+    Added count for changes between windows registry and file. Added cache for two layers services and repositories.
+
+[33mcommit 3d76b72f63982022c7dcc912b2551eb23b487d8b[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Mon Jul 23 17:55:39 2018 +0200
+
+    Added operating system detection during runs application.
+
+[33mcommit f35e9c32147d756b4137beaf991feaec468fd320[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Sun Jul 22 11:55:10 2018 +0200
+
+    Added very simple loader - invoked by method to create registry file.
+
+[33mcommit 12ae7e90bc0bd22e060b4091b4385ef8f781f1b8[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Sun Jul 22 00:49:07 2018 +0200
+
+    Changed final name for jar file.
+
+[33mcommit 495a85d086db5dd3699ed9abd40e53f1d494cdbb[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Sun Jul 22 00:43:34 2018 +0200
+
+    Cleanup in pom - create just one jar with required dependencies.
+
+[33mcommit fe77e5a8ad7aa5e849c39928ff545a19b55b2a25[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Sun Jul 22 00:20:59 2018 +0200
+
+    Extract few methods from Apache Commons Lang3 to standalone StringUtils class. Removed unnecessary pom dependencies.
+
+[33mcommit 9be77e76638602ccf879d20ab64a0650e1523f3e[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Thu Jul 19 22:18:56 2018 +0200
+
+    Added pom configuration to create jar with all dependencies.
+
+[33mcommit 06160d12a8039a5c77baeb4197418df301dbe73c[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Thu Jul 19 22:04:28 2018 +0200
+
+    Add developers secion to pom.xml
+
+[33mcommit a81502ba667a71269f12a5f2d71b5a2e95e1d0aa[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Thu Jul 19 21:52:23 2018 +0200
+
+    First working version! Add BOM util for UCS-2 LE BOM - exported by regedit windows tool.
+
+[33mcommit fd9a4791fc3d4d52fc6d91da6175452a2b8b11fc[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Mon Jul 16 19:03:30 2018 +0200
+
+    Add first version with diff from windows registry and file registry. Change singleton impl. from lazy loading. Update view with data from registry file. Add ignore name from registry file.
+
+[33mcommit 0834589dc8d36f005db9a8077bfaab386d326cfe[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Fri Jul 13 00:01:55 2018 +0200
+
+    Remove comments. Fix logger messages. Add border to construcotr in WhiteJPanel.
+
+[33mcommit 8dafa6b87f6d1bd52edd484763047de6de48c0b2[m
+Author: wlodi <wlodek.grzegorz@gmail.com>
+Date:   Thu Jul 12 23:38:10 2018 +0200
+
+    Extract base view panels from MainWindow. Add example putty exported registry file to resources. Add service to load data from file.
