@@ -9,11 +9,13 @@ import net.wlodi.tools.putty.repository.dto.PuttySessionEntryDTO;
 
 public class PuttySessionEntryDiffDTO {
     
-    public static int COLUMN_COUNT_FOR_VIEW = 5;
+    public static int COLUMN_COUNT_FOR_VIEW = 6;
     
     // TODO maybe below values should be move to AppLocale
     public static String IGNORE_REGISTRY = "The registry entry is ignore.";
     public static String NEW_VALUE_REGISTRY = "Value will be replace.";
+    
+    boolean append; 
     
     String name;
 
@@ -44,6 +46,7 @@ public class PuttySessionEntryDiffDTO {
         if( (StringUtils.isBlank( puttySessionEntryDiff.value ) && StringUtils.isNotBlank( puttySessionEntryDiff.newValue)) ||
             (StringUtils.isNotBlank( puttySessionEntryDiff.value ) && puttySessionEntryDiff.value.equals( puttySessionEntryDiff.newValue ) == false )) {
             puttySessionEntryDiff.comment = NEW_VALUE_REGISTRY;
+            puttySessionEntryDiff.append = true;
         }
         
         return puttySessionEntryDiff;
@@ -58,18 +61,21 @@ public class PuttySessionEntryDiffDTO {
         Object valueForColumn = null;
         switch ( columnIndex ) {
             case 0:
+               valueForColumn = append;
+               break;
+            case 1:
                 valueForColumn = name;
                 break;
-            case 1:
+            case 2:
                 valueForColumn = type;
                 break;
-            case 2:
+            case 3:
                 valueForColumn = value;
                 break;
-            case 3:
+            case 4:
                 valueForColumn = newValue;
                 break;
-            case 4:
+            case 5:
                 valueForColumn = comment;
                 break;
             default:
@@ -80,7 +86,22 @@ public class PuttySessionEntryDiffDTO {
     }
 
     public void saveValue( int columnIndex , Object newValue ) {
-        throw new UnsupportedOperationException( "The operation is not implemented yet!" );
+        
+        if(columnIndex == 0) {
+            append = (boolean) newValue;
+        }
+        else {
+            throw new UnsupportedOperationException( "The operation is not implemented yet!" );
+        }
+    }
+    
+    public static Class<?> getColumnClass(int column) {
+        switch (column) {
+            case 0:
+                return Boolean.class;
+            default:
+                return String.class;
+        }
     }
     
     public String getComment( ) {
@@ -100,6 +121,11 @@ public class PuttySessionEntryDiffDTO {
     
     public String getNewValue( ) {
         return newValue;
+    }
+
+    
+    public boolean isAppend( ) {
+        return append;
     }
 
     private static void validateAccess( int columnIndex ) {

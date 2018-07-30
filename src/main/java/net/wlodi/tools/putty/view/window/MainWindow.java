@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
 import net.wlodi.tools.putty.repository.PuttySessionWindowsRegistryRepository;
+import net.wlodi.tools.putty.repository.conf.AppConf;
 import net.wlodi.tools.putty.repository.conf.AppLocale;
 import net.wlodi.tools.putty.repository.conf.WindowConf;
 import net.wlodi.tools.putty.service.PuttySessionService;
@@ -107,24 +108,30 @@ public class MainWindow extends JFrame {
             @Override
             public void update( DocumentEvent event ) {
                 bottomPanel.disableActions();
-                File selectedFile = filePanel.getSelectedFile();
-                if (selectedFile == null) {
-                    LOGGER.info( "Registry file is empty." );
-                    return;
-                }
-                try {
-                    puttySessionService.loadWindowsExportedRegistryFile( selectedFile );
-                    puttySessionPanel.updateCurrentPuttySession();
-                    puttySessionsTreePanel.updateModel();
-                    bottomPanel.enableActions();
-                    LOGGER.info( "Loaded new windows registry file: {}.", selectedFile.getPath() );
-                }
-                catch ( IOException e ) {
-                    LOGGER.info( "Can not loaded new windows registry file: {}.", selectedFile.getPath(), e );
-                }
-                catch ( InterruptedException e ) {
-                    LOGGER.error( e.getMessage(), e );
-                }
+                MainWindow.inst().startProcessing();
+                Runnable createFileTask = ( ) -> {
+                    File selectedFile = filePanel.getSelectedFile();
+                    if (selectedFile == null) {
+                        LOGGER.info( "Registry file is empty." );
+                        return;
+                    }
+                    try {
+                        puttySessionService.loadWindowsExportedRegistryFile( selectedFile );
+                        puttySessionPanel.updateCurrentPuttySession();
+                        puttySessionsTreePanel.updateModel();
+                        bottomPanel.enableActions();
+                        LOGGER.info( "Loaded new windows registry file: {}.", selectedFile.getPath() );
+                    }
+                    catch ( IOException e ) {
+                        LOGGER.info( "Can not loaded new windows registry file: {}.", selectedFile.getPath(), e );
+                    }
+                    catch ( InterruptedException e ) {
+                        LOGGER.error( e.getMessage(), e );
+                    }
+                    MainWindow.inst().stopProcessing();
+                };
+                Thread thread = new Thread( createFileTask, "load-file-update-sessions" );
+                thread.start();
             }
         } );
 
@@ -138,7 +145,7 @@ public class MainWindow extends JFrame {
                 }
                 try {
                     String sessionName = (String) node.getUserObject();
-                    LOGGER.debug( "Try show values from putty session {}.", sessionName );
+                    LOGGER.debug( "Trying show values from putty session {}.", sessionName );
                     puttySessionPanel.updatePuttySession( sessionName );
                 }
                 catch ( IOException | InterruptedException e ) {
@@ -151,19 +158,21 @@ public class MainWindow extends JFrame {
     }
 
     private void loadSessionEntryConfiguration( ) {
+        if(AppConf.LOAD_ALL_SESSIONS_ENTRY_ON_STARTUP == false) {
+            return;
+        }
         MainWindow.inst().startProcessing();
         Runnable createFileTask = ( ) -> {
             try {
-                for ( String sessionName : puttySessionRepository.getSessionsName() ) {
-                    puttySessionRepository.getSessionConfiguration( sessionName );
-                }
+                LOGGER.info( "Trying load all PuTTY sessions." );
+                puttySessionRepository.loadAllSession();
             }
             catch ( IOException | InterruptedException e ) {
                 LOGGER.error( "Can not load entry configuration for putty sessions.", e );
             }
             MainWindow.inst().stopProcessing();
         };
-        Thread thread = new Thread( createFileTask, "create-file" );
+        Thread thread = new Thread( createFileTask, "load-sessions" );
         thread.start();
     }
 
@@ -187,6 +196,11 @@ public class MainWindow extends JFrame {
         else {
             super.processWindowEvent( e );
         }
+    }
+
+    
+    public PuttySessionsTreePanel getPuttySessionsTreePanel( ) {
+        return puttySessionsTreePanel;
     }
 
 }

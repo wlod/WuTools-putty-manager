@@ -9,13 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.wlodi.tools.putty.repository.conf.AppLocale;
+import net.wlodi.tools.putty.service.PuttySessionService;
 import net.wlodi.tools.putty.service.dto.PuttySessionEntryDiffDTO;
+import net.wlodi.tools.putty.view.window.MainWindow;
 
 
 public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = -8107099027866494848L;
-
+    
+    private PuttySessionService puttySessionService = PuttySessionService.inst();
+    
+    private String sessionName;
+    
     private List<PuttySessionEntryDiffDTO> rows;
 
     private static final Logger LOGGER = LoggerFactory.getLogger( PuttySessionEntryDiifTableModel.class );
@@ -51,11 +57,22 @@ public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
     public void setValueAt( Object aValue , int rowIndex , int columnIndex ) {
         PuttySessionEntryDiffDTO line = rows.get( rowIndex );
         line.saveValue( columnIndex, aValue );
+        
+        // TODO ;-(
+        if(columnIndex == 0) {
+            puttySessionService.updateNumberOfChanges( sessionName, (boolean) aValue ? 1 : -1 );
+            MainWindow.inst().getPuttySessionsTreePanel().updateModel();
+        }
     }
 
     @Override
     public String getColumnName( int columnIndex ) {
         return AppLocale.PUTTY_SESSION_COLUMN_NAME[columnIndex];
+    }
+
+    @Override
+    public boolean isCellEditable( int rowIndex , int colIndex ) {
+        return colIndex == 0;
     }
 
     public PuttySessionEntryDiffDTO getValueAt( int rowIndex ) {
@@ -70,11 +87,8 @@ public class PuttySessionEntryDiifTableModel extends AbstractTableModel {
         rows.clear();
     }
 
-    public boolean addRow( PuttySessionEntryDiffDTO row ) {
-        return rows.add( row );
-    }
-
-    public boolean addRows( List<PuttySessionEntryDiffDTO> rows ) {
+    public boolean addRows( String sessionName, List<PuttySessionEntryDiffDTO> rows ) {
+        this.sessionName = sessionName;
         return this.rows.addAll( rows );
     }
 

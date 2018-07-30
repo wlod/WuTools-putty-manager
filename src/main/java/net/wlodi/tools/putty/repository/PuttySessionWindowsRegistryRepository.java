@@ -67,6 +67,13 @@ public class PuttySessionWindowsRegistryRepository {
         return sessionEntries;
     }
     
+    public void loadAllSession( ) throws IOException, InterruptedException {
+        List<String> sessionsName = getSessionsName();
+        for ( String sessionName : sessionsName ) {
+            getSessionConfiguration( sessionName );
+        }
+    }
+    
     private List<String> getSessionsName( String keyPath ) throws IOException , InterruptedException {
         if(SESSIONS_NAME_CACHE == null) {
             SESSIONS_NAME_CACHE = Collections.synchronizedList(

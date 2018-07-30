@@ -32,22 +32,34 @@ public class PuttySessionPanel extends WhiteJScrollPane {
     }
 
     private void initPanels( ) throws IOException , InterruptedException {
-        table = new JTable( puttySessionEntryDiifTableModel );
+        table = new JTable( puttySessionEntryDiifTableModel ) {
+
+            private static final long serialVersionUID = -5989858959747580556L;
+
+            @Override
+            public Class< ? > getColumnClass( int column ) {
+                return PuttySessionEntryDiffDTO.getColumnClass( column );
+            }
+        };
     }
 
     private void initGUI( ) {
+
+        table.setRowHeight( 25 );
+        table.getColumnModel().getColumn( 0 ).setMaxWidth( 55 );
+
         setViewportView( table );
     }
 
     public void updatePuttySession( String sessionName ) throws IOException , InterruptedException {
         List<PuttySessionEntryDiffDTO> newRows = puttySessionService.getPuttySessionEntryDiffList( sessionName );
         puttySessionEntryDiifTableModel.removeRows();
-        puttySessionEntryDiifTableModel.addRows( newRows );
+        puttySessionEntryDiifTableModel.addRows( sessionName, newRows );
         puttySessionEntryDiifTableModel.fireTableDataChanged();
         this.sessionName = sessionName;
     }
 
-    public void updateCurrentPuttySession( ) throws IOException, InterruptedException {
+    public void updateCurrentPuttySession( ) throws IOException , InterruptedException {
         if (sessionName != null) {
             updatePuttySession( sessionName );
         }

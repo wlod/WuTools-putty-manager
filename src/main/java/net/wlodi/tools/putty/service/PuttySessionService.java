@@ -83,6 +83,14 @@ public class PuttySessionService {
     public Integer getNumberOfChanges( String sessionName ) {
         return SESSIONS_NAME_DIFF_COUNT_CACHE.get( sessionName );
     }
+    
+    public void updateNumberOfChanges( String sessionName, int changes ) {
+        Integer sessionDiffCounter = SESSIONS_NAME_DIFF_COUNT_CACHE.get( sessionName );
+        if(sessionDiffCounter != null) {
+            sessionDiffCounter += changes;
+            SESSIONS_NAME_DIFF_COUNT_CACHE.put( sessionName, sessionDiffCounter );
+        }
+    }
 
     /**
      * 
@@ -109,7 +117,7 @@ public class PuttySessionService {
      * @throws IOException
      */
     public void loadWindowsExportedRegistryFile( File exportedRegistryFile ) throws IOException {
-        LOGGER.info( "Try load registry data from exported file: {}.", exportedRegistryFile );
+        LOGGER.info( "Trying load registry data from exported file: {}.", exportedRegistryFile );
         try (Stream<String> stream = Files.lines( Paths.get( exportedRegistryFile.getPath() ), StandardCharsets.UTF_16LE )) {
 
             puttySessionFileConfiguration = stream
@@ -175,7 +183,7 @@ public class PuttySessionService {
                 mergeLinesContent.add( "[" + AppConf.REGISTRY_KEY + "\\" + sessionName + "]" );
 
                 for ( PuttySessionEntryDiffDTO puttySessionDiff : getPuttySessionEntryDiffList( sessionName ) ) {
-                    if (PuttySessionEntryDiffDTO.NEW_VALUE_REGISTRY.equals( puttySessionDiff.getComment() )) {
+                    if (puttySessionDiff.isAppend()) {
 
                         StringBuilder rawLine = new StringBuilder( "" );
                         rawLine.append( "\"" ).append( puttySessionDiff.getName() ).append( "\"" );
