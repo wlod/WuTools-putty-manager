@@ -166,6 +166,7 @@ public class MainWindow extends JFrame {
             try {
                 LOGGER.info( "Trying load all PuTTY sessions." );
                 puttySessionRepository.loadAllSession();
+                LOGGER.info( "PuTTY sessions loaded." );
             }
             catch ( IOException | InterruptedException e ) {
                 LOGGER.error( "Can not load entry configuration for putty sessions.", e );
