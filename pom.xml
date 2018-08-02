@@ -2,12 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>net.wlodi.tools</groupId>
 	<artifactId>putty-manager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
+	
 	<name>WuTools: Putty Session Manager</name>
-	<description>Tool to manage your Putty' sessions.</description>
-
+	<description>Tool to manage your Putty' sessions.</description>	
 	<url>http://wuputtymanager.wlodi.net</url>
 
 	<developers>
@@ -23,7 +24,7 @@
 		<project.jar.name>WuTools-${project.artifactId}-${project.version}</project.jar.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<logback.version>1.2.3</logback.version>
-		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+		<dependency.plugin.outputDirectory>WuTools-Putty-Manager-libs</dependency.plugin.outputDirectory>
 	</properties>
 
 	<prerequisites>
@@ -74,7 +75,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/WuTools-Putty-Manager-libs</outputDirectory>
+							<outputDirectory>${project.build.directory}/${dependency.plugin.outputDirectory}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -101,7 +102,7 @@
 							<archive>
 								<manifest>
 									<addClasspath>true</addClasspath>
-									<classpathPrefix>WuTools-Putty-Manager-libs/</classpathPrefix>
+									<classpathPrefix>${dependency.plugin.outputDirectory}/</classpathPrefix>
 									<mainClass>net.wlodi.tools.putty.WuPuttySessionsManager</mainClass>
 								</manifest>
 								<manifestEntries>
